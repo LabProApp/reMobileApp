@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:property_mvp_fe/core/di/service_locator.dart';
 import 'package:property_mvp_fe/features/auth/presentation/screens/login.dart';
+import 'package:property_mvp_fe/features/bank/presentation/screens/show_banks.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await init();
+
   runApp(const MyApp());
 }
 
@@ -17,7 +22,7 @@ class MyApp extends StatelessWidget {
        
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const LoginScreen(),
+      home: const BankPage(),
     );
   }
 }
