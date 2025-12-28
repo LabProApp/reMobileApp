@@ -1,22 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+/// =======================
+/// APP COLORS (Orange + Brown)
+/// =======================
+class AppColors {
+  static const primary = Color(0xFFB45309);      // Dark Brown
+  static const secondary = Color(0xFFF59E0B);    // Orange
+  static const lightBrown = Color(0xFFFDE68A);   // Light Brown / Cream
+  static const success = Color(0xFF15803D);      // Green
+  static const danger = Color(0xFFDC2626);       // Red
+  static const background = Color(0xFFFFFBF5);   // Off white
+  static const card = Colors.white;
+  static const textDark = Color(0xFF3F2E1C);
+  static const textMuted = Color(0xFF7C6A55);
+}
 
+/// =======================
+/// BANK DETAIL PAGE
+/// =======================
 class BankDetailPage extends StatelessWidget {
-  final dynamic bank; // Replace with your Bank model type
+  final dynamic bank;
 
   const BankDetailPage({super.key, required this.bank});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppColors.background,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             expandedHeight: 200,
             pinned: true,
-            backgroundColor: Colors.blue.shade700,
+            backgroundColor: AppColors.primary,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 bank.bankName ?? 'Bank Details',
@@ -32,9 +49,12 @@ class BankDetailPage extends StatelessWidget {
                 ),
               ),
               background: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Colors.blue.shade400, Colors.blue.shade700],
+                    colors: [
+                      AppColors.secondary,
+                      AppColors.primary,
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -43,19 +63,23 @@ class BankDetailPage extends StatelessWidget {
                   child: Icon(
                     Icons.account_balance,
                     size: 80,
-                    color: Colors.white54,
+                    color: Colors.white70,
                   ),
                 ),
               ),
             ),
           ),
+
+          /// =======================
+          /// CONTENT
+          /// =======================
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Quick Stats Card
+
+                  /// QUICK STATS
                   Card(
                     elevation: 2,
                     shape: RoundedRectangleBorder(
@@ -72,8 +96,8 @@ class BankDetailPage extends StatelessWidget {
                                   icon: Icons.percent,
                                   title: 'Interest Rate',
                                   value: '${bank.interestRate}%',
-                                  subtitle: bank.interestType ?? 'Fixed',
-                                  color: Colors.green,
+                                  subtitle: bank.interestType ?? 'Floating',
+                                  color: AppColors.secondary,
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -83,7 +107,7 @@ class BankDetailPage extends StatelessWidget {
                                   title: 'Tenure',
                                   value: '${bank.tenureYears}',
                                   subtitle: 'Years',
-                                  color: Colors.orange,
+                                  color: AppColors.primary,
                                 ),
                               ),
                             ],
@@ -97,7 +121,7 @@ class BankDetailPage extends StatelessWidget {
                                   title: 'Processing Fee',
                                   value: '₹${_formatAmount(bank.processingFee)}',
                                   subtitle: 'One-time',
-                                  color: Colors.purple,
+                                  color: AppColors.secondary,
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -107,7 +131,7 @@ class BankDetailPage extends StatelessWidget {
                                   title: 'Min CIBIL',
                                   value: '${bank.minCibilScore}',
                                   subtitle: 'Required',
-                                  color: Colors.blue,
+                                  color: AppColors.primary,
                                 ),
                               ),
                             ],
@@ -119,7 +143,7 @@ class BankDetailPage extends StatelessWidget {
 
                   const SizedBox(height: 16),
 
-                  // Contact Information
+                  /// CONTACT INFO
                   _SectionCard(
                     title: 'Contact Information',
                     icon: Icons.contact_phone,
@@ -135,10 +159,10 @@ class BankDetailPage extends StatelessWidget {
                         value: bank.contactNumber ?? 'N/A',
                         trailing: bank.contactNumber != null
                             ? IconButton(
-                                icon: const Icon(Icons.call, size: 20),
-                                onPressed: () => _launchPhone(bank.contactNumber),
-                                color: Colors.blue,
-                              )
+                          icon: const Icon(Icons.call),
+                          color: AppColors.primary,
+                          onPressed: () => _launchPhone(bank.contactNumber),
+                        )
                             : null,
                       ),
                       _DetailRow(
@@ -147,10 +171,10 @@ class BankDetailPage extends StatelessWidget {
                         value: bank.email ?? 'N/A',
                         trailing: bank.email != null
                             ? IconButton(
-                                icon: const Icon(Icons.email, size: 20),
-                                onPressed: () => _launchEmail(bank.email),
-                                color: Colors.blue,
-                              )
+                          icon: const Icon(Icons.email),
+                          color: AppColors.primary,
+                          onPressed: () => _launchEmail(bank.email),
+                        )
                             : null,
                       ),
                       _DetailRow(
@@ -159,10 +183,10 @@ class BankDetailPage extends StatelessWidget {
                         value: bank.websiteUrl ?? 'N/A',
                         trailing: bank.websiteUrl != null
                             ? IconButton(
-                                icon: const Icon(Icons.open_in_browser, size: 20),
-                                onPressed: () => _launchWebsite(bank.websiteUrl),
-                                color: Colors.blue,
-                              )
+                          icon: const Icon(Icons.open_in_browser),
+                          color: AppColors.primary,
+                          onPressed: () => _launchWebsite(bank.websiteUrl),
+                        )
                             : null,
                       ),
                     ],
@@ -170,47 +194,7 @@ class BankDetailPage extends StatelessWidget {
 
                   const SizedBox(height: 16),
 
-                  // Branch Location
-                  _SectionCard(
-                    title: 'Branch Location',
-                    icon: Icons.location_on,
-                    children: [
-                      _DetailRow(
-                        icon: Icons.store,
-                        label: 'Branch',
-                        value: bank.branchName ?? 'N/A',
-                      ),
-                      _DetailRow(
-                        icon: Icons.home,
-                        label: 'Address',
-                        value: bank.locationAddress ?? 'N/A',
-                      ),
-                      _DetailRow(
-                        icon: Icons.place,
-                        label: 'City',
-                        value: bank.city ?? 'N/A',
-                      ),
-                      _DetailRow(
-                        icon: Icons.location_city,
-                        label: 'State',
-                        value: bank.state ?? 'N/A',
-                      ),
-                      _DetailRow(
-                        icon: Icons.pin_drop,
-                        label: 'Postal Code',
-                        value: bank.postalCode ?? 'N/A',
-                      ),
-                      _DetailRow(
-                        icon: Icons.flag,
-                        label: 'Country',
-                        value: bank.country ?? 'N/A',
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Loan Details
+                  /// LOAN DETAILS
                   _SectionCard(
                     title: 'Loan Details',
                     icon: Icons.account_balance_wallet,
@@ -226,11 +210,6 @@ class BankDetailPage extends StatelessWidget {
                         value: '₹${_formatAmount(bank.minLoanAmount)}',
                       ),
                       _DetailRow(
-                        icon: Icons.currency_rupee,
-                        label: 'Minimum Income',
-                        value: '₹${_formatAmount(bank.minimumIncome)}',
-                      ),
-                      _DetailRow(
                         icon: Icons.work,
                         label: 'Employment Type',
                         value: bank.employmentType ?? 'N/A',
@@ -240,32 +219,7 @@ class BankDetailPage extends StatelessWidget {
 
                   const SizedBox(height: 16),
 
-                  // Eligibility Criteria
-                  _SectionCard(
-                    title: 'Eligibility Criteria',
-                    icon: Icons.check_circle,
-                    children: [
-                      _DetailRow(
-                        icon: Icons.cake,
-                        label: 'Age Range',
-                        value: '${bank.minimumAge} - ${bank.maximumAge} years',
-                      ),
-                      _DetailRow(
-                        icon: Icons.public,
-                        label: 'Nationality',
-                        value: bank.nationalityRequirement ?? 'N/A',
-                      ),
-                      _DetailRow(
-                        icon: Icons.credit_score,
-                        label: 'Minimum CIBIL Score',
-                        value: '${bank.minCibilScore}',
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Features
+                  /// FEATURES
                   _SectionCard(
                     title: 'Features & Benefits',
                     icon: Icons.star,
@@ -279,7 +233,7 @@ class BankDetailPage extends StatelessWidget {
                         isEnabled: bank.partPaymentAllowed ?? false,
                       ),
                       _FeatureRow(
-                        label: 'Balance Transfer Available',
+                        label: 'Balance Transfer',
                         isEnabled: bank.balanceTransferAvailable ?? false,
                       ),
                       _FeatureRow(
@@ -288,85 +242,6 @@ class BankDetailPage extends StatelessWidget {
                       ),
                     ],
                   ),
-
-                  const SizedBox(height: 16),
-
-                  // Special Offers
-                  if (bank.specialOffers != null && bank.specialOffers.isNotEmpty)
-                    _SectionCard(
-                      title: 'Special Offers',
-                      icon: Icons.local_offer,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.amber.shade50,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.amber.shade200),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(Icons.celebration, color: Colors.amber.shade700),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    bank.specialOffers,
-                                    style: TextStyle(
-                                      color: Colors.amber.shade900,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                  const SizedBox(height: 16),
-
-                  // Required Documents
-                  if (bank.requiredDocuments != null && bank.requiredDocuments.isNotEmpty)
-                    _SectionCard(
-                      title: 'Required Documents',
-                      icon: Icons.description,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: Text(
-                            bank.requiredDocuments,
-                            style: TextStyle(
-                              color: Colors.grey[700],
-                              height: 1.5,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                  const SizedBox(height: 16),
-
-                  // Details
-                  if (bank.details != null && bank.details.isNotEmpty)
-                    _SectionCard(
-                      title: 'Additional Details',
-                      icon: Icons.info,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: Text(
-                            bank.details,
-                            style: TextStyle(
-                              color: Colors.grey[700],
-                              height: 1.5,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
 
                   const SizedBox(height: 32),
                 ],
@@ -378,7 +253,10 @@ class BankDetailPage extends StatelessWidget {
     );
   }
 
-  String _formatAmount(double? amount) {
+  /// =======================
+  /// HELPERS
+  /// =======================
+  static String _formatAmount(double? amount) {
     if (amount == null) return 'N/A';
     if (amount >= 10000000) {
       return '${(amount / 10000000).toStringAsFixed(2)} Cr';
@@ -388,24 +266,21 @@ class BankDetailPage extends StatelessWidget {
     return amount.toStringAsFixed(0);
   }
 
-  void _launchPhone(String? phone) async {
-    if (phone == null) return;
+  static void _launchPhone(String phone) async {
     final uri = Uri.parse('tel:$phone');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     }
   }
 
-  void _launchEmail(String? email) async {
-    if (email == null) return;
+  static void _launchEmail(String email) async {
     final uri = Uri.parse('mailto:$email');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     }
   }
 
-  void _launchWebsite(String? url) async {
-    if (url == null) return;
+  static void _launchWebsite(String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -413,6 +288,9 @@ class BankDetailPage extends StatelessWidget {
   }
 }
 
+/// =======================
+/// STAT CARD
+/// =======================
 class _StatCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -433,40 +311,30 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withOpacity(0.15),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withOpacity(0.4)),
       ),
       child: Column(
         children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 8),
+          Icon(icon, color: color),
+          const SizedBox(height: 6),
           Text(
             title,
-            style: TextStyle(
-              fontSize: 11,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 4),
           Text(
             value,
             style: TextStyle(
               fontSize: 16,
-              color: color,
               fontWeight: FontWeight.bold,
+              color: color,
             ),
-            textAlign: TextAlign.center,
           ),
           Text(
             subtitle,
-            style: TextStyle(
-              fontSize: 10,
-              color: Colors.grey[600],
-            ),
-            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 10, color: AppColors.textMuted),
           ),
         ],
       ),
@@ -474,6 +342,9 @@ class _StatCard extends StatelessWidget {
   }
 }
 
+/// =======================
+/// SECTION CARD
+/// =======================
 class _SectionCard extends StatelessWidget {
   final String title;
   final IconData icon;
@@ -488,13 +359,9 @@ class _SectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.white,
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
@@ -503,10 +370,10 @@ class _SectionCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
+                    color: AppColors.lightBrown,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(icon, color: Colors.blue.shade700, size: 20),
+                  child: Icon(icon, color: AppColors.primary),
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -514,7 +381,7 @@ class _SectionCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: AppColors.textDark,
                   ),
                 ),
               ],
@@ -528,6 +395,9 @@ class _SectionCard extends StatelessWidget {
   }
 }
 
+/// =======================
+/// DETAIL ROW
+/// =======================
 class _DetailRow extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -547,29 +417,23 @@ class _DetailRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Colors.grey[600]),
+          Icon(icon, color: AppColors.textMuted),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                Text(label,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textMuted,
+                    )),
+                Text(value,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textDark,
+                    )),
               ],
             ),
           ),
@@ -580,6 +444,9 @@ class _DetailRow extends StatelessWidget {
   }
 }
 
+/// =======================
+/// FEATURE ROW
+/// =======================
 class _FeatureRow extends StatelessWidget {
   final String label;
   final bool isEnabled;
@@ -597,8 +464,7 @@ class _FeatureRow extends StatelessWidget {
         children: [
           Icon(
             isEnabled ? Icons.check_circle : Icons.cancel,
-            size: 20,
-            color: isEnabled ? Colors.green : Colors.red,
+            color: isEnabled ? AppColors.success : AppColors.danger,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -606,16 +472,15 @@ class _FeatureRow extends StatelessWidget {
               label,
               style: const TextStyle(
                 fontSize: 14,
-                color: Colors.black87,
                 fontWeight: FontWeight.w500,
+                color: AppColors.textDark,
               ),
             ),
           ),
           Text(
             isEnabled ? 'Yes' : 'No',
             style: TextStyle(
-              fontSize: 12,
-              color: isEnabled ? Colors.green : Colors.red,
+              color: isEnabled ? AppColors.success : AppColors.danger,
               fontWeight: FontWeight.w600,
             ),
           ),

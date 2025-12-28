@@ -6,6 +6,12 @@ import 'package:property_mvp_fe/features/bank/presentation/screens/detailed_bank
 
 import '../../../../core/di/service_locator.dart';
 
+/// 🎨 Color Palette
+const Color primaryOrange = Color(0xFFF57C00);
+const Color lightOrange = Color(0xFFFFE0B2);
+const Color brown = Color(0xFF8D6E63);
+const Color lightBrown = Color(0xFFD7CCC8);
+
 class BankPage extends StatelessWidget {
   const BankPage({super.key});
 
@@ -16,19 +22,27 @@ class BankPage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.grey[50],
         appBar: AppBar(
+          backgroundColor: lightOrange,
+          foregroundColor: brown,
+          elevation: 0,
           title: const Text(
             'Available Banks',
-            style: TextStyle(fontWeight: FontWeight.w600,fontSize: 22,fontFamily: 'Poppins'),
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 22,
+              fontFamily: 'Poppins',
+            ),
           ),
-          elevation: 0,
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black87,
         ),
         body: BlocBuilder<BankCubit, BankState>(
           builder: (context, state) {
             if (state is BankLoadingState) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is BankLoadedState) {
+              return const Center(
+                child: CircularProgressIndicator(color: primaryOrange),
+              );
+            }
+
+            if (state is BankLoadedState) {
               if (state.banks.isEmpty) {
                 return Center(
                   child: Column(
@@ -37,14 +51,14 @@ class BankPage extends StatelessWidget {
                       Icon(
                         Icons.account_balance_outlined,
                         size: 80,
-                        color: Colors.grey[300],
+                        color: lightBrown,
                       ),
                       const SizedBox(height: 16),
                       Text(
                         'No banks available',
                         style: TextStyle(
                           fontSize: 18,
-                          color: Colors.grey[600],
+                          color: brown,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -58,41 +72,42 @@ class BankPage extends StatelessWidget {
                 itemCount: state.banks.length,
                 itemBuilder: (context, index) {
                   final bank = state.banks[index];
+
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: Card(
-                      color: Colors.white,
-                      elevation: 2,
-                      shadowColor: Colors.black26,
+                      elevation: 3,
+                      shadowColor: Colors.black12,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: InkWell(
+                        borderRadius: BorderRadius.circular(16),
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => BankDetailPage(bank: bank),
+                              builder: (_) =>
+                                  BankDetailPage(bank: bank),
                             ),
                           );
                         },
-                        borderRadius: BorderRadius.circular(16),
                         child: Padding(
                           padding: const EdgeInsets.all(16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              /// 🔹 Header
                               Row(
                                 children: [
                                   Container(
                                     width: 60,
                                     height: 60,
                                     decoration: BoxDecoration(
-                                      color: Colors.blue.shade400,
-                                      gradient: LinearGradient(
+                                      gradient: const LinearGradient(
                                         colors: [
-                                          Colors.blue.shade400,
-                                          Colors.blue.shade700,
+                                          Color(0xFFFF9800),
+                                          Color(0xFF8D6E63),
                                         ],
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
@@ -100,7 +115,7 @@ class BankPage extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(12),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.blue.shade200,
+                                          color: Colors.orange.withOpacity(0.3),
                                           blurRadius: 8,
                                           offset: const Offset(0, 4),
                                         ),
@@ -115,24 +130,17 @@ class BankPage extends StatelessWidget {
                                   const SizedBox(width: 16),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          bank.bankName ?? 'No Name',
+                                          bank.bankName ?? 'Bank Name',
                                           style: const TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.black87,
                                           ),
                                         ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          bank.branchName ?? 'Branch',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.grey[600],
-                                          ),
-                                        ),
+
                                       ],
                                     ),
                                   ),
@@ -143,48 +151,30 @@ class BankPage extends StatelessWidget {
                                   ),
                                 ],
                               ),
+
                               const SizedBox(height: 16),
-                              const Divider(height: 1),
+                              const Divider(),
                               const SizedBox(height: 12),
+
+                              /// 🔹 Info Chips
                               Row(
                                 children: [
                                   Expanded(
                                     child: _InfoChip(
                                       icon: Icons.percent,
-                                      label: 'Interest Rate',
+                                      label: 'Starting Interest Rate',
                                       value: '${bank.interestRate}%',
-                                      color: Colors.green,
+                                      color: primaryOrange,
                                     ),
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: _InfoChip(
                                       icon: Icons.calendar_today,
-                                      label: 'Tenure',
-                                      value: '${bank.tenureYears} years',
-                                      color: Colors.orange,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: _InfoChip(
-                                      icon: Icons.location_on,
-                                      label: 'Location',
-                                      value: bank.city ?? 'N/A',
-                                      color: Colors.purple,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: _InfoChip(
-                                      icon: Icons.phone,
-                                      label: 'Contact',
-                                      value: bank.contactNumber ?? 'N/A',
-                                      color: Colors.blue,
+                                      label: 'Max Tenure',
+                                      value:
+                                      '${bank.tenureYears} years',
+                                      color: brown,
                                     ),
                                   ),
                                 ],
@@ -197,26 +187,22 @@ class BankPage extends StatelessWidget {
                   );
                 },
               );
-            } else if (state is BankErrorState) {
+            }
+
+            if (state is BankErrorState) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.error_outline,
-                      size: 64,
-                      color: Colors.red[300],
-                    ),
+                    Icon(Icons.error_outline,
+                        size: 64, color: primaryOrange),
                     const SizedBox(height: 16),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 32),
                       child: Text(
                         state.message,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[700],
-                        ),
+                        style: TextStyle(color: brown),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -227,9 +213,10 @@ class BankPage extends StatelessWidget {
                       icon: const Icon(Icons.refresh),
                       label: const Text('Retry'),
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
+                        backgroundColor: primaryOrange,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                     ),
@@ -237,6 +224,7 @@ class BankPage extends StatelessWidget {
                 ),
               );
             }
+
             return const SizedBox();
           },
         ),
@@ -245,6 +233,7 @@ class BankPage extends StatelessWidget {
   }
 }
 
+/// 🔹 Info Chip Widget
 class _InfoChip extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -268,7 +257,6 @@ class _InfoChip extends StatelessWidget {
         border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 16, color: color),
           const SizedBox(width: 6),
@@ -281,17 +269,15 @@ class _InfoChip extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 10,
                     color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 Text(
                   value,
-                  style: TextStyle(
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
                     fontSize: 12,
-                    color: Colors.black87,
                     fontWeight: FontWeight.w600,
                   ),
-                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
